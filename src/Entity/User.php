@@ -35,6 +35,9 @@ class User
     #[ORM\OneToMany(targetEntity: Session::class, mappedBy: 'user_id')]
     private Collection $sessions;
 
+    #[ORM\Column(length: 255)]
+    private ?string $password = null;
+
     public function __construct()
     {
         $this->sessions = new ArrayCollection();
@@ -119,6 +122,24 @@ class User
                 $session->setUserId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getJwt(): ?string
+    {
+        return $this->jwt;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $this->password = $passwordHash;
 
         return $this;
     }
